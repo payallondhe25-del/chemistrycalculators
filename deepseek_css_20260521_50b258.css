@@ -1,0 +1,293 @@
+/* ======================= BASE & GLOBAL ======================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background: linear-gradient(145deg, #e0eafc 0%, #cfdef3 100%);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ======================= HEADER ======================= */
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    font-size: 2.2rem;
+    color: #1a2a4f;
+    letter-spacing: -0.5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.header p {
+    color: #2c3e66;
+    margin-top: 0.5rem;
+    font-weight: 500;
+}
+
+/* ======================= TAB BAR ======================= */
+.tab-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.tab-btn {
+    background: white;
+    border: none;
+    padding: 0.8rem 1.8rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 60px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    color: #1e2f5e;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.tab-btn.active {
+    background: #1e3a8a;
+    color: white;
+    box-shadow: 0 8px 18px rgba(30, 58, 138, 0.3);
+    border-color: transparent;
+}
+
+.tab-btn:hover:not(.active) {
+    background: #eef2ff;
+    transform: translateY(-2px);
+}
+
+/* ======================= CARD (MAIN PANEL) ======================= */
+.card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(2px);
+    border-radius: 32px;
+    box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.2);
+    padding: 2rem 1.8rem;
+    transition: all 0.2s;
+}
+
+.calculator-panel {
+    display: none;
+}
+
+.calculator-panel.active-panel {
+    display: block;
+    animation: fade 0.25s ease;
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ======================= INPUT GROUPS ======================= */
+.input-group {
+    margin-bottom: 1.3rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.input-group label {
+    width: 220px;
+    font-weight: 600;
+    color: #1f2b48;
+}
+
+.input-group input,
+.input-group select {
+    flex: 1;
+    min-width: 160px;
+    padding: 0.7rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    background: #fefefe;
+    transition: 0.2s;
+}
+
+.input-group input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Radio group styling */
+.radio-group {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.radio-group span {
+    font-weight: 600;
+    color: #1f2b48;
+    margin-right: 0.5rem;
+}
+
+.radio-group label {
+    font-weight: normal;
+    width: auto;
+    margin-right: 1rem;
+    cursor: pointer;
+}
+
+/* ======================= BUTTONS ======================= */
+.calc-btn {
+    background: #0f3b2c;
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 40px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    margin-right: 1rem;
+    transition: 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.calc-btn:hover {
+    background: #1e5a44;
+    transform: scale(1.02);
+}
+
+.reset-btn {
+    background: #475569;
+}
+
+.reset-btn:hover {
+    background: #1e293b;
+}
+
+/* ======================= RESULT AREA ======================= */
+.result-area {
+    margin-top: 2rem;
+    background: #f0f9ff;
+    border-radius: 28px;
+    padding: 1.5rem;
+    border-left: 6px solid #2c7a5e;
+}
+
+.result-area h3 {
+    color: #0f3b2c;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.result-line {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    background: #eef2ff;
+    padding: 0.5rem 1rem;
+    border-radius: 18px;
+    margin: 0.8rem 0;
+    word-break: break-word;
+}
+
+.species {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.badge {
+    background: #d9f0ec;
+    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    font-weight: 500;
+}
+
+hr {
+    margin: 1rem 0;
+    border: 1px solid #cbd5e1;
+}
+
+/* ======================= FOOTER ======================= */
+footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    color: #2c3e66;
+    font-size: 0.8rem;
+}
+
+/* ======================= RESPONSIVE (MOBILE) ======================= */
+@media (max-width: 680px) {
+    body {
+        padding: 1rem 0.8rem;
+    }
+
+    .header h1 {
+        font-size: 1.6rem;
+    }
+
+    .tab-btn {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.85rem;
+    }
+
+    .card {
+        padding: 1.5rem 1rem;
+    }
+
+    .input-group {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .input-group label {
+        width: 100%;
+    }
+
+    .input-group input,
+    .input-group select {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .radio-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .calc-btn {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+
+    .result-line {
+        font-size: 0.85rem;
+        overflow-x: auto;
+    }
+
+    .species {
+        flex-direction: column;
+    }
+}

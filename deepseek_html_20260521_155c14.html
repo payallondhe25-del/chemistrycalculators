@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Water Quality Calculators | Alkalinity & Hardness</title>
+    <style>
+        /* ========== ALL CSS STYLES ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e0eafc 0%, #cfdef3 100%);
+            min-height: 100vh;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            color: #1a2a4f;
+            letter-spacing: -0.5px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .header p {
+            color: #2c3e66;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .tab-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            background: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            color: #1e2f5e;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .tab-btn.active {
+            background: #1e3a8a;
+            color: white;
+            box-shadow: 0 8px 18px rgba(30,58,138,0.3);
+            border-color: transparent;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #eef2ff;
+            transform: translateY(-2px);
+        }
+
+        .card {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(2px);
+            border-radius: 32px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            padding: 2rem 1.8rem;
+        }
+
+        .calculator-panel {
+            display: none;
+        }
+
+        .calculator-panel.active-panel {
+            display: block;
+            animation: fade 0.25s ease;
+        }
+
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(5px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        .input-group {
+            margin-bottom: 1.3rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .input-group label {
+            width: 220px;
+            font-weight: 600;
+            color: #1f2b48;
+        }
+
+        .input-group input, .input-group select {
+            flex: 1;
+            min-width: 160px;
+            padding: 0.7rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            background: #fefefe;
+            transition: 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .radio-group span {
+            font-weight: 600;
+            color: #1f2b48;
+            margin-right: 0.5rem;
+        }
+
+        .radio-group label {
+            font-weight: normal;
+            width: auto;
+            margin-right: 1rem;
+            cursor: pointer;
+        }
+
+        .calc-btn {
+            background: #0f3b2c;
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 40px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            margin-right: 1rem;
+            transition: 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .calc-btn:hover {
+            background: #1e5a44;
+            transform: scale(1.02);
+        }
+
+        .reset-btn {
+            background: #475569;
+        }
+
+        .reset-btn:hover {
+            background: #1e293b;
+        }
+
+        .result-area {
+            margin-top: 2rem;
+            background: #f0f9ff;
+            border-radius: 28px;
+            padding: 1.5rem;
+            border-left: 6px solid #2c7a5e;
+        }
+
+        .result-area h3 {
+            color: #0f3b2c;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .result-line {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            background: #eef2ff;
+            padding: 0.5rem 1rem;
+            border-radius: 18px;
+            margin: 0.8rem 0;
+        }
+
+        .species {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .badge {
+            background: #d9f0ec;
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-weight: 500;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: 1px solid #cbd5e1;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            color: #2c3e66;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 680px) {
+            .input-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .input-group label {
+                width: 100%;
+            }
+            .tab-btn {
+                padding: 0.5rem 1.2rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>💧 Water Quality Suite</h1>
+        <p>Alkalinity (P&M) · EDTA Hardness · Zeolite Regeneration</p>
+    </div>
+
+    <div class="tab-bar">
+        <button class="tab-btn active" data-tab="tab1">🧪 Alkalinity (Titration)</button>
+        <button class="tab-btn" data-tab="tab2">⚗️ EDTA Hardness</button>
+        <button class="tab-btn" data-tab="tab3">🔄 Zeolite Hardness</button>
+    </div>
+
+    <!-- ALKALINITY CALCULATOR -->
+    <div id="tab1" class="calculator-panel active-panel">
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">📊 Alkalinity as CaCO₃ (Phenolphthalein & Methyl Orange)</h2>
+            <div class="input-group">
+                <label>💧 Water sample volume (ml) :</label>
+                <input type="number" id="alk_vol" value="100" step="any">
+            </div>
+            <div class="input-group">
+                <label>⚡ Normality of H₂SO₄ (N) :</label>
+                <input type="text" id="alk_norm" value="0.02" placeholder="e.g., 0.02 or N/50">
+            </div>
+            <div class="input-group">
+                <label>🔵 V₁ (Phenolphthalein) ml :</label>
+                <input type="number" id="alk_v1" value="20" step="any">
+            </div>
+            <div class="input-group">
+                <label>📌 Methyl orange entry :</label>
+                <div class="radio-group">
+                    <span></span>
+                    <label><input type="radio" name="mo_mode" value="total" checked> Total V₂ (to methyl orange)</label>
+                    <label><input type="radio" name="mo_mode" value="add"> Additional volume after phenolphthalein</label>
+                </div>
+            </div>
+            <div class="input-group" id="alk_total_group">
+                <label>📏 Total V₂ (ml) :</label>
+                <input type="number" id="alk_v2_total" value="40" step="any">
+            </div>
+            <div class="input-group" id="alk_add_group" style="display:none;">
+                <label>➕ Additional volume after V₁ (ml) :</label>
+                <input type="number" id="alk_v2_add" value="20" step="any">
+            </div>
+            <div>
+                <button class="calc-btn" id="calcAlk">🧮 Calculate Alkalinity</button>
+                <button class="calc-btn reset-btn" id="resetAlk">⟳ Reset</button>
+            </div>
+            <div id="alkResult" class="result-area">
+                <h3>📋 Results</h3>
+                <div id="alkOutput">Click "Calculate" to see detailed P & M alkalinity.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDTA HARDNESS CALCULATOR -->
+    <div id="tab2" class="calculator-panel">
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">💎 EDTA Hardness (Total, Permanent, Temporary)</h2>
+            <div class="input-group">
+                <label>🧪 Water sample volume (ml) :</label>
+                <input type="number" id="edta_vol_sample" value="50" step="any">
+            </div>
+            <div class="input-group">
+                <label>⚗️ Molarity of EDTA (M) :</label>
+                <input type="number" id="edta_m" value="0.02" step="any">
+            </div>
+            <div class="input-group">
+                <label>🟢 EDTA volume before boiling (ml) :</label>
+                <input type="number" id="edta_before" value="12.2" step="any">
+            </div>
+            <div class="input-group">
+                <label>🔥 EDTA volume after boiling (ml) :</label>
+                <input type="number" id="edta_after" value="8.2" step="any">
+            </div>
+            <div>
+                <button class="calc-btn" id="calcEdta">🧮 Calculate Hardness</button>
+                <button class="calc-btn reset-btn" id="resetEdta">⟳ Reset</button>
+            </div>
+            <div id="edtaResult" class="result-area">
+                <h3>📋 Hardness (ppm CaCO₃)</h3>
+                <div id="edtaOutput">Fill values and click calculate.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ZEOLITE HARDNESS CALCULATOR -->
+    <div id="tab3" class="calculator-panel">
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">🔄 Zeolite Regeneration Hardness</h2>
+            <div class="input-group">
+                <label>🧂 Brine volume (liters) :</label>
+                <input type="number" id="zeo_brine_l" value="4.8" step="any">
+            </div>
+            <div class="input-group">
+                <label>🧂 NaCl concentration (g/L) :</label>
+                <input type="number" id="zeo_nacl_conc" value="100" step="any">
+            </div>
+            <div class="input-group">
+                <label>🚰 Water treated (liters) :</label>
+                <input type="number" id="zeo_water_l" value="1200" step="any">
+            </div>
+            <div>
+                <button class="calc-btn" id="calcZeolite">🧮 Calculate Hardness</button>
+                <button class="calc-btn reset-btn" id="resetZeolite">⟳ Reset</button>
+            </div>
+            <div id="zeoResult" class="result-area">
+                <h3>📋 Water Hardness (ppm as CaCO₃)</h3>
+                <div id="zeoOutput">Enter data and press calculate.</div>
+            </div>
+        </div>
+    </div>
+    <footer>⚡ Based on standard titration & zeolite methods. Values in mg/L as CaCO₃ equivalent.</footer>
+</div>
+
+<script>
+    // ======================= ALL JAVASCRIPT =======================
+    function parseNormality(inputStr) {
+        let s = inputStr.toString().trim().toLowerCase();
+        if (s.startsWith('n/')) {
+            let denom = parseFloat(s.split('/')[1]);
+            return 1.0 / denom;
+        }
+        if (s.endsWith('n')) s = s.slice(0, -1);
+        return parseFloat(s);
+    }
+
+    function hardnessClass(ppm) {
+        if (ppm < 50) return "Soft water";
+        if (ppm < 100) return "Moderately soft";
+        if (ppm < 150) return "Slightly hard";
+        if (ppm < 200) return "Moderately hard";
+        if (ppm <= 300) return "Hard water";
+        return "Very hard water";
+    }
+
+    // Alkalinity calculation
+    function computeAlkalinity() {
+        try {
+            let volSample = parseFloat(document.getElementById('alk_vol').value);
+            let normRaw = document.getElementById('alk_norm').value;
+            let v1 = parseFloat(document.getElementById('alk_v1').value);
+            let mode = document.querySelector('input[name="mo_mode"]:checked').value;
+            let v2_total = null, v2_add = null;
+            if (mode === 'total') {
+                v2_total = parseFloat(document.getElementById('alk_v2_total').value);
+            } else {
+                v2_add = parseFloat(document.getElementById('alk_v2_add').value);
+            }
+            if (isNaN(volSample) || volSample <= 0) throw "Sample volume must be >0";
+            let normality = parseNormality(normRaw);
+            if (isNaN(normality) || normality <= 0) throw "Invalid normality";
+            if (isNaN(v1) || v1 < 0) throw "V1 invalid";
+            let v2;
+            if (mode === 'total') {
+                if (isNaN(v2_total)) throw "Total V2 required";
+                if (v2_total < v1) throw "Total V2 must be ≥ V1";
+                v2 = v2_total;
+            } else {
+                if (isNaN(v2_add) || v2_add < 0) throw "Additional volume invalid";
+                v2 = v1 + v2_add;
+            }
+
+            const factor = (normality * 50 * 1000) / volSample;
+            let P = v1 * factor;
+            let M = v2 * factor;
+            P = Math.round(P * 100) / 100;
+            M = Math.round(M * 100) / 100;
+
+            let alkType = "", OH = 0, CO3 = 0, HCO3 = 0;
+            if (P === 0) {
+                alkType = "Bicarbonate (HCO₃) only";
+                HCO3 = M;
+            } else if (Math.abs(P - M) < 0.01) {
+                alkType = "Hydroxide (OH) only";
+                OH = P;
+            } else if (P < M / 2) {
+                alkType = "Carbonate + Bicarbonate (P < ½ M)";
+                CO3 = 2 * P;
+                HCO3 = M - 2 * P;
+            } else if (Math.abs(P - M / 2) < 0.01) {
+                alkType = "Carbonate only (CO₃)";
+                CO3 = 2 * P;
+            } else {
+                alkType = "Hydroxide + Carbonate (P > ½ M)";
+                OH = 2 * P - M;
+                CO3 = 2 * (M - P);
+            }
+            OH = Math.round(OH * 100) / 100;
+            CO3 = Math.round(CO3 * 100) / 100;
+            HCO3 = Math.round(HCO3 * 100) / 100;
+
+            let html = `<div class="result-line">📌 P = (${v1} × ${normality} × 50 × 1000) / ${volSample} = <strong>${P} mg/L as CaCO₃</strong></div>`;
+            html += `<div class="result-line">📌 M = (${v2.toFixed(2)} × ${normality} × 50 × 1000) / ${volSample} = <strong>${M} mg/L as CaCO₃</strong></div>`;
+            html += `<hr>`;
+            if (Math.abs(P - M/2) < 0.01) html += `<div>✅ Since P = ½ M → Carbonate only</div>`;
+            else if (P === 0) html += `<div>✅ P = 0 → Bicarbonate only</div>`;
+            else if (Math.abs(P - M) < 0.01) html += `<div>✅ P = M → Hydroxide only</div>`;
+            else html += `<div>📊 Type: ${alkType}</div>`;
+            html += `<div class="species"><span class="badge">OH⁻: ${OH} mg/L</span>`;
+            html += `<span class="badge">CO₃²⁻: ${CO3} mg/L</span>`;
+            html += `<span class="badge">HCO₃⁻: ${HCO3} mg/L</span></div>`;
+            document.getElementById('alkOutput').innerHTML = html;
+        } catch (err) {
+            document.getElementById('alkOutput').innerHTML = `<span style="color:#c2410c;">⚠️ Error: ${err}</span>`;
+        }
+    }
+
+    function resetAlkalinity() {
+        document.getElementById('alk_vol').value = '100';
+        document.getElementById('alk_norm').value = '0.02';
+        document.getElementById('alk_v1').value = '20';
+        document.querySelector('input[value="total"]').checked = true;
+        document.getElementById('alk_v2_total').value = '40';
+        document.getElementById('alk_v2_add').value = '20';
+        document.getElementById('alk_total_group').style.display = 'flex';
+        document.getElementById('alk_add_group').style.display = 'none';
+        computeAlkalinity();
+    }
+
+    function toggleAlkMode() {
+        let mode = document.querySelector('input[name="mo_mode"]:checked').value;
+        if (mode === 'total') {
+            document.getElementById('alk_total_group').style.display = 'flex';
+            document.getElementById('alk_add_group').style.display = 'none';
+        } else {
+            document.getElementById('alk_total_group').style.display = 'none';
+            document.getElementById('alk_add_group').style.display = 'flex';
+        }
+    }
+
+    // EDTA Hardness
+    function computeEdta() {
+        try {
+            let sampleVol = parseFloat(document.getElementById('edta_vol_sample').value);
+            let edtaM = parseFloat(document.getElementById('edta_m').value);
+            let vBefore = parseFloat(document.getElementById('edta_before').value);
+            let vAfter = parseFloat(document.getElementById('edta_after').value);
+            if (sampleVol <= 0) throw "Sample volume >0";
+            if (edtaM <= 0) throw "Molarity >0";
+            if (vBefore < 0 || vAfter < 0) throw "Volumes can't be negative";
+            const factor = 1e5;
+            let total = (vBefore * edtaM * factor) / sampleVol;
+            let permanent = (vAfter * edtaM * factor) / sampleVol;
+            let temporary = total - permanent;
+            total = Math.round(total * 100) / 100;
+            permanent = Math.round(permanent * 100) / 100;
+            temporary = Math.round(temporary * 100) / 100;
+
+            let html = `<div class="result-line">🔹 Total Hardness = (${vBefore} × ${edtaM} × 10⁵) / ${sampleVol} = <strong>${total} ppm CaCO₃</strong> → ${hardnessClass(total)}</div>`;
+            html += `<div class="result-line">🔸 Permanent Hardness = (${vAfter} × ${edtaM} × 10⁵) / ${sampleVol} = <strong>${permanent} ppm CaCO₃</strong> → ${hardnessClass(permanent)}</div>`;
+            html += `<div class="result-line">🧽 Temporary Hardness = Total - Permanent = <strong>${temporary} ppm CaCO₃</strong> → ${hardnessClass(temporary)}</div>`;
+            document.getElementById('edtaOutput').innerHTML = html;
+        } catch (err) {
+            document.getElementById('edtaOutput').innerHTML = `<span style="color:#c2410c;">⚠️ ${err}</span>`;
+        }
+    }
+
+    function resetEdta() {
+        document.getElementById('edta_vol_sample').value = '50';
+        document.getElementById('edta_m').value = '0.02';
+        document.getElementById('edta_before').value = '12.2';
+        document.getElementById('edta_after').value = '8.2';
+        computeEdta();
+    }
+
+    // Zeolite Hardness
+    function computeZeolite() {
+        try {
+            let brineL = parseFloat(document.getElementById('zeo_brine_l').value);
+            let naclConc = parseFloat(document.getElementById('zeo_nacl_conc').value);
+            let waterL = parseFloat(document.getElementById('zeo_water_l').value);
+            if (brineL <= 0 || naclConc <= 0 || waterL <= 0) throw "All values must be positive";
+            let nacl_g = brineL * naclConc;
+            let nacl_mg = nacl_g * 1000;
+            let eqWeightNaCl = 58.5;
+            let caco3_eq_mg = (nacl_mg * 50) / eqWeightNaCl;
+            let hardnessPpm = caco3_eq_mg / waterL;
+            hardnessPpm = Math.round(hardnessPpm * 100) / 100;
+
+            let html = `<div class="result-line"><strong>Step I:</strong> NaCl mass = ${brineL} L × ${naclConc} g/L = ${nacl_g} g = ${nacl_mg.toFixed(0)} mg</div>`;
+            html += `<div class="result-line"><strong>Step II:</strong> CaCO₃ equivalent = (${nacl_mg.toFixed(0)} × 50) / 58.5 = ${caco3_eq_mg.toFixed(2)} mg</div>`;
+            html += `<div class="result-line"><strong>Step III:</strong> Hardness = ${caco3_eq_mg.toFixed(2)} mg / ${waterL} L = <strong>${hardnessPpm} ppm as CaCO₃</strong></div>`;
+            document.getElementById('zeoOutput').innerHTML = html;
+        } catch (err) {
+            document.getElementById('zeoOutput').innerHTML = `<span style="color:#c2410c;">⚠️ ${err}</span>`;
+        }
+    }
+
+    function resetZeolite() {
+        document.getElementById('zeo_brine_l').value = '4.8';
+        document.getElementById('zeo_nacl_conc').value = '100';
+        document.getElementById('zeo_water_l').value = '1200';
+        computeZeolite();
+    }
+
+    // Tab switching
+    function switchTab(tabId) {
+        document.querySelectorAll('.calculator-panel').forEach(panel => panel.classList.remove('active-panel'));
+        document.getElementById(tabId).classList.add('active-panel');
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
+    }
+
+    // Event listeners
+    window.onload = () => {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                let tab = btn.getAttribute('data-tab');
+                switchTab(tab);
+                if (tab === 'tab1') computeAlkalinity();
+                else if (tab === 'tab2') computeEdta();
+                else if (tab === 'tab3') computeZeolite();
+            });
+        });
+
+        let radios = document.querySelectorAll('input[name="mo_mode"]');
+        radios.forEach(radio => radio.addEventListener('change', toggleAlkMode));
+        toggleAlkMode();
+
+        document.getElementById('calcAlk').addEventListener('click', computeAlkalinity);
+        document.getElementById('resetAlk').addEventListener('click', resetAlkalinity);
+        document.getElementById('calcEdta').addEventListener('click', computeEdta);
+        document.getElementById('resetEdta').addEventListener('click', resetEdta);
+        document.getElementById('calcZeolite').addEventListener('click', computeZeolite);
+        document.getElementById('resetZeolite').addEventListener('click', resetZeolite);
+
+        computeAlkalinity();
+        computeEdta();
+        computeZeolite();
+    };
+</script>
+</body>
+</html>
